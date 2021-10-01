@@ -89,9 +89,13 @@ class LoginForm(QWidget):
         while 1:
             cv2.imshow("Check Color", img)
             if clicked:
-                print(r, g, b)
+                print("color: rgb(" + str(r) + "," + str(g) + "," + str(b) + ");")
+
                 msg.setText("R: " + str(r) + "   G: " + str(g) + "   B: " + str(b))
-                #msg.setStyleSheet("text-color: rgb(255, 255, 255);")
+                if r+g+b < 300:
+                    msg.setStyleSheet("color: rgb(" + str(r) + "," + str(g) + "," + str(b) + ");")
+                else:
+                    msg.setStyleSheet("QMessageBox{background-color: rgb(" + str(r) + "," + str(g) + "," + str(b) + ")}")
                 msg.exec_()
                 clicked = False
             # EXITS WITH ESC + X
