@@ -2,11 +2,15 @@ import cv2
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdit, QGridLayout, QMessageBox
 import sys
 
-
 image = "pictures\pic3.jpg"
 img = cv2.imread(image)
 r = g = b = 0
 clicked = False
+const_button_original = 1
+const_button_gray = 2
+const_button_sketch = 3
+const_button_color = 4
+curr_button = 0
 
 def exit_app():
     app.quit()
@@ -31,28 +35,54 @@ class LoginForm(QWidget):
         label_name = QLabel('<font size="4"> What do you want? </font>')
         layout.addWidget(label_name, 0, 0)
 
-        button_login = QPushButton('Original')
-        button_login.clicked.connect(self.show_original)
-        layout.addWidget(button_login, 1, 1, 1, 1)
+        # First Button: get original picture
+        button_cam = QPushButton('Camera')
+        button_cam.clicked.connect(self.check_color)
+        layout.addWidget(button_cam, 1, 1, 1, 1)
         layout.setRowMinimumHeight(2, 25)
-
-        button_login = QPushButton('To gray')
-        button_login.clicked.connect(self.to_gray)
-        layout.addWidget(button_login, 2, 1, 1, 1)
-        layout.setRowMinimumHeight(2, 25)
-
-        button_signup = QPushButton('To sketch')
-        button_signup.clicked.connect(self.to_sketch)
-        layout.addWidget(button_signup, 3, 0, 1, 1)
-        layout.setRowMinimumHeight(2, 25)
-
-        button_signup = QPushButton('Check color')
-        button_signup.clicked.connect(self.check_color)
-        layout.addWidget(button_signup, 3, 1, 1, 1)
+        
+        # Second Button: get gray picture
+        button_no_cam = QPushButton('No camera')
+        button_no_cam.clicked.connect(self.no_cam)
+        layout.addWidget(button_no_cam, 2, 1, 1, 1)
         layout.setRowMinimumHeight(2, 25)
 
         self.setLayout(layout)
 
+    def no_cam(self):
+        self.setWindowTitle('Photo filters')
+        self.resize(300, 120)
+
+        layout = QGridLayout()
+        label_name = QLabel('<font size="4"> What do you want? </font>')
+        layout.addWidget(label_name, 0, 0)
+
+        # First Button: get original picture
+        button_original = QPushButton('Original')
+        button_original.clicked.connect(self.show_original)
+        layout.addWidget(button_original, 1, 1, 1, 1)
+        layout.setRowMinimumHeight(2, 25)
+        
+        # Second Button: get gray picture
+        button_gray = QPushButton('To gray')
+        button_gray.clicked.connect(self.to_gray)
+        layout.addWidget(button_gray, 2, 1, 1, 1)
+        layout.setRowMinimumHeight(2, 25)
+
+        
+        # Third Button: get sketch picture
+        button_sketch = QPushButton('To sketch')
+        button_sketch.clicked.connect(self.to_sketch)
+        layout.addWidget(button_sketch, 3, 0, 1, 1)
+        layout.setRowMinimumHeight(2, 25)
+
+        # Fourth Button: check color
+        button_color = QPushButton('Check color')
+        button_color.clicked.connect(self.check_color)
+        layout.addWidget(button_color, 3, 1, 1, 1)
+        layout.setRowMinimumHeight(2, 25)
+
+        self.setLayout(layout)
     def show_original(self):
         cv2.imshow("Original", img)
         cv2.waitKey(0)
