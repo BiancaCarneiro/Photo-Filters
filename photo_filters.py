@@ -41,24 +41,29 @@ class PhotoFilters(QWidget):
         layout.addWidget(button_camera, 1, 0, 1, 1)
         layout.setRowMinimumHeight(2, 25)
 
-        button_toGrayCam = QPushButton('To gray camera')
-        button_toGrayCam.clicked.connect(self.to_gray_camera)
-        layout.addWidget(button_toGrayCam, 2, 0, 1, 1)
-        layout.setRowMinimumHeight(2, 25)
-
         button_toGray = QPushButton('To gray')
         button_toGray.clicked.connect(self.to_gray)
         layout.addWidget(button_toGray, 2, 1, 1, 1)
         layout.setRowMinimumHeight(2, 25)
 
+        button_toGrayCam = QPushButton('To gray camera')
+        button_toGrayCam.clicked.connect(self.to_gray_camera)
+        layout.addWidget(button_toGrayCam, 2, 0, 1, 1)
+        layout.setRowMinimumHeight(2, 25)
+
         button_sketch = QPushButton('To sketch')
         button_sketch.clicked.connect(self.to_sketch)
-        layout.addWidget(button_sketch, 3, 0, 1, 1)
+        layout.addWidget(button_sketch, 3, 1, 1, 1)
+        layout.setRowMinimumHeight(2, 25)
+
+        button_sketchCam = QPushButton('To sketch camera')
+        button_sketchCam.clicked.connect(self.to_sketch_camera)
+        layout.addWidget(button_sketchCam, 3, 0, 1, 1)
         layout.setRowMinimumHeight(2, 25)
 
         button_CheckColor = QPushButton('Check color')
         button_CheckColor.clicked.connect(self.check_color)
-        layout.addWidget(button_CheckColor, 3, 1, 1, 1)
+        layout.addWidget(button_CheckColor, 4, 1, 1, 1)
         layout.setRowMinimumHeight(2, 25)
 
         self.setLayout(layout)
@@ -93,6 +98,38 @@ class PhotoFilters(QWidget):
                 break
             frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             cv2.imshow("Press space to save the picture and ESC to leave", frame_gray)
+            k = cv2.waitKey(1)
+            if k%256 == 27:
+                break
+            elif k%256 == 32:
+                # SPACE pressed
+                img_name = "opencv_frame_{}.png".format(img_counter)
+                cv2.imwrite(img_name, frame)
+                img_counter += 1
+        cam.release()
+        cv2.destroyAllWindows()
+
+    def to_sketch_camera(self):
+        cam = cv2.VideoCapture(0)
+        img_counter = 0
+        while True:
+            ret, frame = cam.read()
+            if not ret:
+                print("failed to grab frame")
+                break
+            # lets create a sketch
+            # Steps:
+            # 1: Convert to grey -> DONE
+            frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            # 2: Invert Image
+            frame_invert = cv2.bitwise_not(frame_gray)
+            # 3: Blur image
+            frame_blur = cv2.GaussianBlur(frame_invert, (111,111),0)
+            # 4: Invert Blurred image
+            frame_blurinvert = cv2.bitwise_not(frame_blur)
+            # 5: bit-wise division -> Final step
+            frame_sketch = cv2.divide(frame_gray, frame_blurinvert, scale=256.0)
+            cv2.imshow("Press space to save the picture and ESC to leave", frame_sketch)
             k = cv2.waitKey(1)
             if k%256 == 27:
                 break
