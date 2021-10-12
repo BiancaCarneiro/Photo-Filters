@@ -20,7 +20,7 @@ def draw_function(event, x,y,flags,param):
         g = int(g)
         r = int(r)
 
-class LoginForm(QWidget):
+class PhotoFilters(QWidget):
     # Defines the structure of the app
     def __init__(self):
         super().__init__()
@@ -34,6 +34,16 @@ class LoginForm(QWidget):
         button_original = QPushButton('Original')
         button_original.clicked.connect(self.show_original)
         layout.addWidget(button_original, 1, 1, 1, 1)
+        layout.setRowMinimumHeight(2, 25)
+
+        button_camera = QPushButton('Camera')
+        button_camera.clicked.connect(self.open_camera)
+        layout.addWidget(button_camera, 1, 0, 1, 1)
+        layout.setRowMinimumHeight(2, 25)
+
+        button_toGrayCam = QPushButton('To gray camera')
+        button_toGrayCam.clicked.connect(self.to_gray_camera)
+        layout.addWidget(button_toGrayCam, 2, 0, 1, 1)
         layout.setRowMinimumHeight(2, 25)
 
         button_toGray = QPushButton('To gray')
@@ -52,6 +62,47 @@ class LoginForm(QWidget):
         layout.setRowMinimumHeight(2, 25)
 
         self.setLayout(layout)
+
+    def open_camera(self):
+        print("camera")
+        cam = cv2.VideoCapture(0)
+        img_counter = 0
+        while True:
+            ret, frame = cam.read()
+            if not ret:
+                print("failed to grab frame")
+                break
+            cv2.imshow("Press space to save the picture and ESC to leave", frame)
+            k = cv2.waitKey(1)
+            if k%256 == 27:
+                break
+            elif k%256 == 32:
+                # SPACE pressed
+                img_name = "opencv_frame_{}.png".format(img_counter)
+                cv2.imwrite(img_name, frame)
+                img_counter += 1
+        cam.release()
+
+    def to_gray_camera(self):
+        cam = cv2.VideoCapture(0)
+        img_counter = 0
+        while True:
+            ret, frame = cam.read()
+            if not ret:
+                print("failed to grab frame")
+                break
+            frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            cv2.imshow("Press space to save the picture and ESC to leave", frame_gray)
+            k = cv2.waitKey(1)
+            if k%256 == 27:
+                break
+            elif k%256 == 32:
+                # SPACE pressed
+                img_name = "opencv_frame_{}.png".format(img_counter)
+                cv2.imwrite(img_name, frame)
+                img_counter += 1
+        cam.release()
+        cv2.destroyAllWindows()
 
     def show_original(self):
         cv2.imshow("Original", img)
@@ -105,6 +156,6 @@ class LoginForm(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    form = LoginForm()
+    form = PhotoFilters()
     form.show()
     sys.exit(app.exec_())
