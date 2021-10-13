@@ -66,6 +66,11 @@ class PhotoFilters(QWidget):
         layout.addWidget(button_CheckColor, 4, 1, 1, 1)
         layout.setRowMinimumHeight(2, 25)
 
+        button_CheckColorCam = QPushButton('Check color camera')
+        button_CheckColorCam.clicked.connect(self.check_color_camera)
+        layout.addWidget(button_CheckColorCam, 4, 0, 1, 1)
+        layout.setRowMinimumHeight(2, 25)
+
         self.setLayout(layout)
 
     def open_camera(self):
@@ -83,10 +88,11 @@ class PhotoFilters(QWidget):
                 break
             elif k%256 == 32:
                 # SPACE pressed
-                img_name = "opencv_frame_{}.png".format(img_counter)
+                img_name = "original_pic_{}.png".format(img_counter)
                 cv2.imwrite(img_name, frame)
                 img_counter += 1
         cam.release()
+        cv2.destroyAllWindows()
 
     def to_gray_camera(self):
         cam = cv2.VideoCapture(0)
@@ -103,8 +109,8 @@ class PhotoFilters(QWidget):
                 break
             elif k%256 == 32:
                 # SPACE pressed
-                img_name = "opencv_frame_{}.png".format(img_counter)
-                cv2.imwrite(img_name, frame)
+                img_name = "gray_pic_{}.png".format(img_counter)
+                cv2.imwrite(img_name, frame_gray)
                 img_counter += 1
         cam.release()
         cv2.destroyAllWindows()
@@ -135,24 +141,55 @@ class PhotoFilters(QWidget):
                 break
             elif k%256 == 32:
                 # SPACE pressed
-                img_name = "opencv_frame_{}.png".format(img_counter)
-                cv2.imwrite(img_name, frame)
+                img_name = "sketch_pic_{}.png".format(img_counter)
+                cv2.imwrite(img_name, frame_sketch)
                 img_counter += 1
         cam.release()
         cv2.destroyAllWindows()
 
+    def check_color_camera(self):
+        global clicked
+        global img
+        msg = QMessageBox()
+        cam = cv2.VideoCapture(0)
+        cv2.namedWindow('Check Color - Press ESC to leave')
+        cv2.setMouseCallback('Check Color - Press ESC to leave', draw_function)
+        while True:
+            ret, img = cam.read()
+            cv2.imshow("Check Color - Press ESC to leave", img)
+            if clicked:
+                print("color: rgb(" + str(r) + "," + str(g) + "," + str(b) + ");")
+
+                msg.setText("R: " + str(r) + "   G: " + str(g) + "   B: " + str(b))
+                if r+g+b < 300:
+                    msg.setStyleSheet("color: rgb(" + str(r) + "," + str(g) + "," + str(b) + ");")
+                else:
+                    msg.setStyleSheet("QMessageBox{background-color: rgb(" + str(r) + "," + str(g) + "," + str(b) + ")}")
+                msg.exec_()
+                clicked = False
+            if cv2.waitKey(20) & 0xFF ==27:
+                break
+        cam.release()
+        cv2.destroyAllWindows()
+
     def show_original(self):
+        global img
+        img = cv2.imread(image)
         cv2.imshow("Original", img)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
     def to_gray(self):
+        global img
+        img = cv2.imread(image)
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         cv2.imshow("Black and white", img_gray)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
     def to_sketch(self):
+        global img
+        img = cv2.imread(image)
         # lets create a sketch
         # Steps:
         # 1: Convert to grey -> DONE
@@ -170,12 +207,14 @@ class PhotoFilters(QWidget):
         cv2.destroyAllWindows()
 
     def check_color(self):
+        global img
+        img = cv2.imread(image)
         global clicked
         msg = QMessageBox()
-        cv2.namedWindow('Check Color')
-        cv2.setMouseCallback('Check Color', draw_function)
+        cv2.namedWindow('Check Color - Press ESC to leave')
+        cv2.setMouseCallback('Check Color - Press ESC to leave', draw_function)
         while 1:
-            cv2.imshow("Check Color", img)
+            cv2.imshow("Check Color - Press ESC to leave", img)
             if clicked:
                 print("color: rgb(" + str(r) + "," + str(g) + "," + str(b) + ");")
 
@@ -189,6 +228,7 @@ class PhotoFilters(QWidget):
             # EXITS WITH ESC + X
             if cv2.waitKey(20) & 0xFF ==27:
                 break
+        cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
