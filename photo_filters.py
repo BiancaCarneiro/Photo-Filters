@@ -1,5 +1,6 @@
+from PyQt5.QtGui import QIcon
 import cv2
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdit, QGridLayout, QMessageBox
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QGridLayout, QMessageBox
 import sys
 
 
@@ -26,6 +27,7 @@ class PhotoFilters(QWidget):
         super().__init__()
         self.setWindowTitle('Photo filters')
         self.resize(300, 120)
+        self.setWindowIcon(QIcon("pictures/PFlogo.png"))
 
         layout = QGridLayout()
         label_name = QLabel('<font size="4"> What do you want? </font>')
@@ -74,7 +76,7 @@ class PhotoFilters(QWidget):
         self.setLayout(layout)
 
     def open_camera(self):
-        print("camera")
+        #print("camera")
         cam = cv2.VideoCapture(0)
         img_counter = 0
         while True:
@@ -158,7 +160,7 @@ class PhotoFilters(QWidget):
             ret, img = cam.read()
             cv2.imshow("Check Color - Press ESC to leave", img)
             if clicked:
-                print("color: rgb(" + str(r) + "," + str(g) + "," + str(b) + ");")
+                #print("color: rgb(" + str(r) + "," + str(g) + "," + str(b) + ");")
 
                 msg.setText("R: " + str(r) + "   G: " + str(g) + "   B: " + str(b))
                 if r+g+b < 300:
@@ -216,7 +218,7 @@ class PhotoFilters(QWidget):
         while 1:
             cv2.imshow("Check Color - Press ESC to leave", img)
             if clicked:
-                print("color: rgb(" + str(r) + "," + str(g) + "," + str(b) + ");")
+                #print("color: rgb(" + str(r) + "," + str(g) + "," + str(b) + ");")
 
                 msg.setText("R: " + str(r) + "   G: " + str(g) + "   B: " + str(b))
                 if r+g+b < 300:
