@@ -22,7 +22,7 @@
       </ul>
     </dd>
   </dl>
-  <h3>Instalation</h3>
+  <h3>Installation</h3>
   <pre><code>pip install opencv-python</code></pre>
   <pre><code>pip install PyQt5</code></pre>
   <h3>Gallery</h3>
