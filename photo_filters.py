@@ -76,7 +76,6 @@ class PhotoFilters(QWidget):
         self.setLayout(layout)
 
     def open_camera(self):
-        #print("camera")
         cam = cv2.VideoCapture(0)
         img_counter = 0
         while True:
@@ -150,8 +149,7 @@ class PhotoFilters(QWidget):
         cv2.destroyAllWindows()
 
     def check_color_camera(self):
-        global clicked
-        global img
+        global clicked, img
         msg = QMessageBox()
         cam = cv2.VideoCapture(0)
         cv2.namedWindow('Check Color - Press ESC to leave')
@@ -160,8 +158,6 @@ class PhotoFilters(QWidget):
             ret, img = cam.read()
             cv2.imshow("Check Color - Press ESC to leave", img)
             if clicked:
-                #print("color: rgb(" + str(r) + "," + str(g) + "," + str(b) + ");")
-
                 msg.setText("R: " + str(r) + "   G: " + str(g) + "   B: " + str(b))
                 if r+g+b < 300:
                     msg.setStyleSheet("color: rgb(" + str(r) + "," + str(g) + "," + str(b) + ");")
@@ -209,17 +205,14 @@ class PhotoFilters(QWidget):
         cv2.destroyAllWindows()
 
     def check_color(self):
-        global img
+        global img, clicked
         img = cv2.imread(image)
-        global clicked
         msg = QMessageBox()
         cv2.namedWindow('Check Color - Press ESC to leave')
         cv2.setMouseCallback('Check Color - Press ESC to leave', draw_function)
         while 1:
             cv2.imshow("Check Color - Press ESC to leave", img)
             if clicked:
-                #print("color: rgb(" + str(r) + "," + str(g) + "," + str(b) + ");")
-
                 msg.setText("R: " + str(r) + "   G: " + str(g) + "   B: " + str(b))
                 if r+g+b < 300:
                     msg.setStyleSheet("color: rgb(" + str(r) + "," + str(g) + "," + str(b) + ");")
