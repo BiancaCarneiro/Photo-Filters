@@ -27,4 +27,5 @@
   <pre><code>pip install PyQt5</code></pre>
   <h3>Gallery</h3>
   <img src="https://github.com/BiancaCarneiro/Photo-filters/blob/main/pictures/Capture.PNG?raw=true" alt="App picture">
+  <a href="https://www.youtube.com/watch?v=jdGfBPAV8_s">Demonstration Video</a>
 </body>
